@@ -1,8 +1,8 @@
 // Import the express library, and the functions we defined in our `db.js` file earlier
 // along with the "joi" library, which we use for validation
 const express = require('express')
-const Joi = require('@hapi/joi')
-const { insertItem, getItems, updateQuantity } = require('./db')
+const Joi = require('joi')
+const { insertItem, getItems, updateQuantity } = require('./database')
 
 // Initialize a new router instance
 const router = express.Router()
@@ -68,3 +68,5 @@ router.get('/items', (req, res) => {
       res.status(500).end()
     })
 })
+
+module.exports = router

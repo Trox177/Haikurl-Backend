@@ -38,3 +38,6 @@ const init = () =>
     const collection = db.collection('items')
     return collection.updateOne({ _id: ObjectId(id) }, { $inc: { quantity } })
   }
+
+
+module.exports = { init, insertItem, getItems, updateQuantity }
