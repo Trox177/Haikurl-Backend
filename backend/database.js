@@ -65,4 +65,4 @@ const init = () =>
   }
 
 
-module.exports = { init, insertItem, getItems, updateQuantity }
+module.exports = { init, insertUrl, getItems, getHaiku, updateTraffic}

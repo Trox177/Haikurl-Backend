@@ -3,7 +3,7 @@ const express = require('express')
 const Joi = require('joi')
 
 //Import Database Functions
-const { insertItem, getItems, updateQuantity } = require('./database')
+const { init, insertUrl, getItems, getHaiku, updateTraffic } = require('./database')
 
 // Initialize a new router instance
 const router = express.Router()
@@ -27,7 +27,7 @@ url: string.domain()
 */
 
 const itemSchema = Joi.object().keys({
-  url: Joi.string().domain();
+  url: Joi.string().domain()
 })
 
 /*
