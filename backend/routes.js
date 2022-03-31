@@ -1,69 +1,96 @@
-// Import the express library, and the functions we defined in our `db.js` file earlier
-// along with the "joi" library, which we use for validation
+//Uses JOI library for setting up shcema/Express for routes
 const express = require('express')
 const Joi = require('joi')
+
+//Import Database Functions
 const { insertItem, getItems, updateQuantity } = require('./database')
 
 // Initialize a new router instance
 const router = express.Router()
 
-// Define the schema for the item
-// Each item will have a `name`, which is a string
-// and a `quantity`, which is a positive integer
+// Define the schema for the Haiku URL Storage
+/*
+
+//DATABASE SCHEMA
+{
+  id: integer,
+  url: string,
+  haiku: string,
+  traffic: integer > 0
+}
+
+//REQUEST VALIDATION SCHEMA
+{
+url: string.domain()
+}
+
+*/
+
 const itemSchema = Joi.object().keys({
-  name: Joi.string(),
-  quantity: Joi.number().integer().min(0)
+  url: Joi.string().domain();
 })
 
-// A new POST route is created using the `router` objects `post` method
-// providing the route and handler as the arguments
-router.post('/item', (req, res) => {
-  // We get the item from the request body
+/*
+Post request route to validate and add url to database
+*/
+router.post('/url', (req, res) => {
+
+  //Recieve item from body
   const item = req.body
 
-  // The itemSchema is used to validate the fields of the item
+  //Validate that the post request contains a single valid url
   const result = itemSchema.validate(item)
   if (result.error) {
-    // if any of the fields are wrong, log the error and return a 400 status
+    //If validation fails - send 400 status - log error
     console.log(result.error)
     res.status(400).end()
     return
   }
 
-  // If the validation passes, insert the item into the DB
-  insertItem(item)
+  //After validation passess - pass url to insertUrl function
+  insertUrl(item)
     .then(() => {
-      // Once the item is inserted successfully, return a 200 OK status
+      //If insertion passess - send 200 status
       res.status(200).end()
     })
     .catch((err) => {
-      // If there is any error in inserting the item, log the error and
-      // return a 500 server error status
+      // If insertion fails - send 500 status
       console.log(err)
       res.status(500).end()
     })
 })
 
-router.get('/items', (req, res) => {
-  // `getItems` returns a new promise which resolves with the result
-  getItems()
-    .then((items) => {
-      // The promise resolves with the items as results
-      items = items.map((item) => ({
-        // In mongoDB, each object has an id stored in the `_id` field
-        // here a new field called `id` is created for each item which
-        // maps to its mongo id
-        id: item._id,
-        name: item.name,
-        quantity: item.quantity
-      }))
+//Returns the traffic of a specific haiku as JSON
+router.get('/:haiku/traffic', (req, res) => {
+  // `getHaiku` retrieves the haiku from the database
+  getHaiku()
+    .then((haiku) => {
 
-      // Finally, the items are written to the response as JSON
+      //TODO - MINIMIZE OBJECT TO JUST TRAFFIC INTEGER
+
+      // Respond with the haiku object as json
+      res.json(haiku)
+    })
+    .catch((err) => {
+      // If retrieval fails - send 500 status
+      console.log(err)
+      res.status(500).end()
+    })
+})
+
+//Redirects the user to the original URL
+router.get('/:haiku', (req, res) => {
+  // `getHaiku` retrieves the haiku from the database
+  getHaiku()
+    .then((haiku) => {
+
+      //TODO - MINIMIZE HAIKU OBJECT TO ORIGINAL URL
+
+      // Send the response url as a json
       res.json(items)
     })
     .catch((err) => {
-      // If there is an error in getting the items, we return a 500 status
-      // code, and log the error
+      // If retrieval fails - send 500 status
       console.log(err)
       res.status(500).end()
     })

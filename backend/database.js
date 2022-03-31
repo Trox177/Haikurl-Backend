@@ -1,41 +1,66 @@
-// import the `MongoClient` object from the library
+// import `MongoClient`
 const { MongoClient } = require('mongodb')
 
-// define the connection string. If you're running your DB
-// on your laptop, this would most likely be it's address
+//Database connection url
 const connectionUrl = 'mongodb://localhost:27017'
 
-// Define the DB name. We will call ours `store`
-const dbName = 'store'
+// Defines the database name as haikurl
+const dbName = 'haikurl'
 
-// Create a singleton variable `db`
+//Variable for the database
 let db
 
-// The init function retruns a promise, which, once resolved,
-// assigns the mongodb connection to the `db` variable
+//Init Function for MongoDB Database
 const init = () =>
   MongoClient.connect(connectionUrl, { useNewUrlParser: true }).then((client) => {
     db = client.db(dbName)
   })
 
-  // these functions are added to the `db.js` file:
+  /*
+  insertUrl FUNCTION
 
-  // Take the item as an argument and insert it into the "items" collection
-  const insertItem = (item) => {
-    const collection = db.collection('items')
+  Takes in item (From Post REQUEST '/url')
+  Modifies item to correct DB schema
+
+  //DATABASE SCHEMA
+  {
+    id: integer,
+    url: string,
+    haiku: string,
+    traffic: integer > 0
+  }
+
+  Calls Haiku Generation to add to item object (TO BE IMPLEMENTED)
+
+  @param item: pre-modified object containing user sent url to be stored and converted
+  @pre: Post request compeleted recieving url from user
+  @post: return result of inserting item into 'url' document
+  */
+  const insertUrl = (item) => {
+    const collection = db.collection('url')
+
+    //TODO: MODIFY ITEM OBJECT
+    //TODO: CALL HAIKU GENERATION FUNCTION
+
     return collection.insertOne(item)
   }
 
   // get all items from the "items" collection
   const getItems = () => {
-    const collection = db.collection('items')
+    const collection = db.collection('url')
     return collection.find({}).toArray()
+  }
+
+  // get all items from the "items" collection
+  const getTraffic = (haiku) => {
+    const collection = db.collection('url')
+    return collection.find({ haiku: haiku })
   }
 
   // take the id and the quantity to add as arguments, and increase the
   // "quantity" using the `$inc` operator
   const updateQuantity = (id, quantity) => {
-    const collection = db.collection('items')
+    const collection = db.collection('url')
     return collection.updateOne({ _id: ObjectId(id) }, { $inc: { quantity } })
   }
 
