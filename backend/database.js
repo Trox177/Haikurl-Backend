@@ -51,17 +51,17 @@ const init = () =>
     return collection.find({}).toArray()
   }
 
-  // get all items from the "items" collection
+  //Get a Haiku from the database
+  //Requires the haiku in correct format
   const getHaiku = (haiku) => {
     const collection = db.collection('url')
     return collection.find({ haiku: haiku })
   }
 
-  // take the id and the quantity to add as arguments, and increase the
-  // "quantity" using the `$inc` operator
-  const updateQuantity = (id, quantity) => {
+  // take the id as argument - increase traffic counter
+  const updateTraffic = (id) => {
     const collection = db.collection('url')
-    return collection.updateOne({ _id: ObjectId(id) }, { $inc: { quantity } })
+    return collection.updateOne({ _id: ObjectId(id) }, { $inc: { traffic } })
   }
 
 
