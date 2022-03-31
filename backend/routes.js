@@ -85,6 +85,7 @@ router.get('/:haiku', (req, res) => {
     .then((haiku) => {
 
       //TODO - MINIMIZE HAIKU OBJECT TO ORIGINAL URL
+      //TODO - Update the Traffic Counter
 
       // Send the response url as a json
       res.json(items)
