@@ -52,7 +52,7 @@ const init = () =>
   }
 
   // get all items from the "items" collection
-  const getTraffic = (haiku) => {
+  const getHaiku = (haiku) => {
     const collection = db.collection('url')
     return collection.find({ haiku: haiku })
   }
