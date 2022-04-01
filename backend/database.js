@@ -1,5 +1,6 @@
 // import `MongoClient`
 const { MongoClient } = require('mongodb')
+var haiku_gen = require('haiku-random');
 
 //Database connection url
 const connectionUrl = 'mongodb://localhost:27017'
@@ -36,11 +37,45 @@ const init = () =>
   @pre: Post request compeleted recieving url from user
   @post: return result of inserting item into 'url' document
   */
-  const insertUrl = (item) => {
-    const collection = db.collection('url')
+  const insertUrl = async (item) => {
 
-    //TODO: MODIFY ITEM OBJECT
+    const collection = db.collection('url')
+    let haikuPass = true;
+
     //TODO: CALL HAIKU GENERATION FUNCTION
+
+    function safeHaiku() {
+      return new Promise(resolve => {
+
+        let flag = true;
+        let haiku = "";
+        let haiku_ran = haiku_gen.random();
+        haiku_ran.forEach((h) => {
+          haiku += h;
+        })
+
+        haiku = haiku.replace(/\s/g , "-");
+
+        getHaiku(haiku)
+        .then((h) => {
+          //duplicate haiku found;
+          flag = false;
+          safeHaiku();
+        })
+
+        if(flag){
+          resolve(haiku);
+        }
+
+      });
+    }
+
+
+    //Set id to be the haiku
+    item.haiku = await safeHaiku();
+    item.traffic = 0;
+
+    console.log(item)
 
     return collection.insertOne(item)
   }
@@ -55,13 +90,13 @@ const init = () =>
   //Requires the haiku in correct format
   const getHaiku = (haiku) => {
     const collection = db.collection('url')
-    return collection.find({ haiku: haiku })
+    return collection.find({haiku: haiku}).toArray()
   }
 
-  // take the id as argument - increase traffic counter
-  const updateTraffic = (id) => {
+  // take the haiku as argument - increase traffic counter
+  const updateTraffic = (haiku, traffic) => {
     const collection = db.collection('url')
-    return collection.updateOne({ _id: ObjectId(id) }, { $inc: { traffic } })
+    return collection.updateOne({ haiku: haiku }, { $inc: { traffic } })
   }
 
 

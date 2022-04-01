@@ -62,11 +62,15 @@ router.post('/url', (req, res) => {
 
 //Returns the traffic of a specific haiku as JSON
 router.get('/:haiku/traffic', (req, res) => {
+
+  let haiku = req.params.haiku;
+
   // `getHaiku` retrieves the haiku from the database
-  getHaiku()
+  getHaiku(haiku)
     .then((haiku) => {
 
       //TODO - MINIMIZE OBJECT TO JUST TRAFFIC INTEGER
+      haiku = haiku[0].traffic
 
       // Respond with the haiku object as json
       res.json(haiku)
@@ -80,15 +84,23 @@ router.get('/:haiku/traffic', (req, res) => {
 
 //Redirects the user to the original URL
 router.get('/:haiku', (req, res) => {
+
+  let haiku = req.params.haiku;
+
   // `getHaiku` retrieves the haiku from the database
-  getHaiku()
+  getHaiku(haiku)
     .then((haiku) => {
 
-      //TODO - MINIMIZE HAIKU OBJECT TO ORIGINAL URL
-      //TODO - Update the Traffic Counter
-
-      // Send the response url as a json
-      res.json(items)
+      //Minimize Object Data for Haiku url
+      let local_url = haiku[0].url;
+      let traffic = haiku[0].traffic;
+      haiku = haiku[0].haiku;
+      //Update the Traffic += 1
+      updateTraffic(haiku, 1)
+      .then((q) => {
+        // Send the response url as a json
+        res.json(local_url)
+      })
     })
     .catch((err) => {
       // If retrieval fails - send 500 status
