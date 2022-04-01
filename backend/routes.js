@@ -99,7 +99,7 @@ router.get('/:haiku', (req, res) => {
       updateTraffic(haiku, 1)
       .then((q) => {
         // Send the response url as a json
-        res.json(local_url)
+        res.redirect('http://' + local_url)
       })
     })
     .catch((err) => {
