@@ -52,6 +52,7 @@ const init = () =>
         let haiku_ran = haiku_gen.random();
         haiku_ran.forEach((h) => {
           haiku += h;
+          haiku += '/'
         })
 
         haiku = haiku.replace(/\s/g , "-");
