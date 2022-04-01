@@ -50,8 +50,9 @@ router.post('/url', (req, res) => {
   //After validation passess - pass url to insertUrl function
   insertUrl(item)
     .then(() => {
+      console.log(item.haiku)
       //If insertion passess - send 200 status
-      res.status(200).end()
+      res.status(200).end(item.haiku)
     })
     .catch((err) => {
       // If insertion fails - send 500 status
