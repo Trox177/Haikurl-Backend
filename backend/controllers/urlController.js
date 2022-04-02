@@ -4,7 +4,7 @@
  */
 const { urlSchema } = require('../validations/urlValidations');
 
-const { createUniqueHaiku, getUrlByHaiku } = require('../services/urlServices');
+const { createUniqueHaiku, generateNewEntry, getUrlByHaiku } = require('../services/urlServices');
 
 /**
  * Saves a url to the database and responds with a haiku
@@ -17,9 +17,16 @@ const saveUrl = async (req, res, next) => {
   const errorMessage = { message: 'Must provide a valid url', code: 400 };
   try {
     if (req.body === undefined) throw errorMessage;
+    console.log(urlSchema.validate(req.body));
     if (urlSchema.validate(req.body).error) throw errorMessage;
 
-    const { haiku } = await createUniqueHaiku(req.body.url);
+    const url = req.body.url;
+
+    //Make Haiku
+    const haiku = await createUniqueHaiku(url);
+    //Store Haiku
+    const { store } = await generateNewEntry(url, haiku);
+
     res.status(200).json({ haiku });
   } catch (error) {
     next(error);
