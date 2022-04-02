@@ -64,7 +64,7 @@ const haikurlRedirect = async (req, res, next) => {
 
     urlObj.traffic += 1;
     await urlObj.save();
-    res.redirect(urlObj.url);
+    res.redirect(301, encodeURI(urlObj.url));
   } catch (error) {
     next(error);
   }
