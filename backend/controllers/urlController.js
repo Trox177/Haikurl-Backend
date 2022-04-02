@@ -43,7 +43,7 @@ const getTraffic = async (req, res, next) => {
 };
 
 /**
- * Gets the amount of times a haikurl has been accessed
+ * Redirects a user to the url that the haiku points to, then increments the url objects traffic
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
